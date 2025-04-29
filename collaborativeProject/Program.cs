@@ -1,46 +1,60 @@
 ﻿using System;
-using System.Threading;
+using System.Collections.Generic;
 
-namespace collaborativeProjectSln
+class Program
 {
-    class Program
+    static Dictionary<string, Account> konta = new Dictionary<string, Account>();
+
+    static void Main()
     {
-        static void Main(string[] args)
+        bool dzialanie = true;
+
+        while (dzialanie)
         {
-            Console.Write("Podaj swoje imię: ");
-            string name = Console.ReadLine();
+            Console.WriteLine("\n=== MENU GŁÓWNE ===");
+            Console.WriteLine("1. Rejestracja");
+            Console.WriteLine("2. Logowanie");
+            Console.WriteLine("3. Wyjście");
+            Console.Write("Wybierz opcję: ");
+            string? opcja = Console.ReadLine();
 
-            var account = new BankAccount(name);
-
-            try
+            switch (opcja)
             {
-                account.Deposit(100);
-
-                Console.Write("Podaj imię do wypłaty 50 zł (weryfikacja): ");
-                string verifyName = Console.ReadLine();
-
-                account.Withdraw(50, verifyName);
-
-                Console.WriteLine("\nCzekam 30 sekund bez aktywności, żeby zasymulować brak operacji...");
-                Thread.Sleep(30 * 1000); // 30 sekund
-
-                Console.WriteLine("\nWykonuję wpłatę 30 zł po dłuższej nieaktywności (powinna aktywować konto):");
-                account.Deposit(30);
-
-                Console.WriteLine("\nZamykam konto:");
-                account.CloseAccount();
-
-                Console.WriteLine("\nSpróbujmy jeszcze wpłacić po zamknięciu konta:");
-                account.Deposit(10); // powinno rzucić wyjątek
+                case "1":
+                    Rejestracja();
+                    break;
+                case "2":
+                    Logowanie();
+                    break;
+                case "3":
+                    dzialanie = false;
+                    Console.WriteLine("Zamykanie programu...");
+                    break;
+                default:
+                    Console.WriteLine("Niepoprawny wybór, spróbuj ponownie.");
+                    break;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[Błąd] {ex.Message}");
-            }
-
-            account.ShowLog();
-
-            Console.WriteLine("\nKoniec programu.");
         }
     }
-}
+
+    static void Rejestracja()
+    {
+        Console.Write("Podaj ID użytkownika: ");
+        string? id = Console.ReadLine();
+        Console.Write("Podaj hasło: ");
+        string? haslo = Console.ReadLine();
+
+        if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(haslo) && !konta.ContainsKey(id))
+        {
+            konta[id] = new Account(id, haslo);
+            Console.WriteLine("✅ Konto zostało utworzone!");
+        }
+        else
+        {
+            Console.WriteLine("❌ Błąd: ID już istnieje lub dane są niepoprawne.");
+        }
+    }
+
+    static void Logowanie()
+    {
+        Console.Write("Podaj ID użytkownika
